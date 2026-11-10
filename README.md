@@ -75,5 +75,17 @@ Open http://localhost:3000 to see the story wall. The frontend finds the backend
 | GET    | `/health`  | Checks that the server is running              |
 | GET    | `/stories` | Lists stories, newest first (`?limit=`, max 100) |
 | POST   | `/stories` | Shares a new story                             |
+| GET    | `/activities` | Lists logged activities, newest first (`?limit=`, default 50) |
+| POST   | `/activities` | Logs a new activity                         |
 
 A story has a `purpose` (one of: `for_myself`, `for_someone_i_love`, `for_mental_wellbeing`, `for_a_cause`, `for_my_family`, `to_prove_i_can`, `for_my_community`), a `body` (1–1000 characters), and an optional `display_name`.
+
+An activity has an `activity_type` (`run`, `swim`, `ride`, `gym`, `walk`, `other`) and a `duration_s` (1 second to 24 hours). These are optional:
+
+- `distance_m`: 0 to 500,000 meters
+- `avg_heart_rate`: 30 to 250 bpm
+- `purpose`: same values as stories
+- `note`: up to 500 characters
+- `display_name`
+
+Distance is stored in meters and time in seconds. The API also returns `pace_s_per_km`, which is calculated when activities are sent back and never stored.

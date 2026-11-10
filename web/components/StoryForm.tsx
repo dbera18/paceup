@@ -2,9 +2,10 @@
 
 import { FormEvent, useState } from "react";
 import { createStory, MAX_BODY_LENGTH, MAX_NAME_LENGTH, Purpose, PURPOSES } from "@/lib/api";
+import { fieldErrorClass, hintClass, inputClass, labelClass, primaryButtonClass } from "./ui";
 
 type Props = {
-  onPosted: () => void;
+  onPosted: (message: string) => void;
 };
 
 export default function StoryForm({ onPosted }: Props) {
@@ -12,16 +13,18 @@ export default function StoryForm({ onPosted }: Props) {
   const [body, setBody] = useState("");
   const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [bodyError, setBodyError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); // stop the browser from reloading the page
+    setFormError(null);
     if (!body.trim()) {
-      setError("Please write a few words about why you move.");
+      setBodyError("Write a few words about why you move.");
       return;
     }
+    setBodyError(null);
     setSubmitting(true);
-    setError(null);
     try {
       await createStory({
         purpose,
@@ -29,31 +32,25 @@ export default function StoryForm({ onPosted }: Props) {
         display_name: name.trim() || null, // blank name → Anonymous
       });
       setBody("");
-      setName("");
-      onPosted();
+      onPosted("Thanks for sharing your story! 💛");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setFormError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="space-y-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm"
-    >
-      <h2 className="text-lg font-semibold text-stone-900">Share your purpose</h2>
-
-      <div className="space-y-1.5">
-        <label htmlFor="purpose" className="block text-sm font-medium text-stone-700">
+    <form onSubmit={handleSubmit} noValidate className="space-y-7">
+      <div className="space-y-2">
+        <label htmlFor="purpose" className={labelClass}>
           Why do you move?
         </label>
         <select
           id="purpose"
           value={purpose}
           onChange={(e) => setPurpose(e.target.value as Purpose)}
-          className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-stone-900 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20"
+          className={inputClass}
         >
           {PURPOSES.map((p) => (
             <option key={p.value} value={p.value}>
@@ -63,8 +60,8 @@ export default function StoryForm({ onPosted }: Props) {
         </select>
       </div>
 
-      <div className="space-y-1.5">
-        <label htmlFor="body" className="block text-sm font-medium text-stone-700">
+      <div className="space-y-2">
+        <label htmlFor="body" className={labelClass}>
           Your story
         </label>
         <textarea
@@ -72,41 +69,42 @@ export default function StoryForm({ onPosted }: Props) {
           value={body}
           onChange={(e) => setBody(e.target.value)}
           maxLength={MAX_BODY_LENGTH}
-          rows={4}
+          rows={5}
           placeholder="I run every morning because…"
-          className="w-full resize-y rounded-lg border border-stone-300 px-3 py-2 text-stone-900 placeholder:text-stone-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20"
+          aria-invalid={!!bodyError}
+          className={inputClass + " resize-y"}
         />
-        <p className="text-right text-xs text-stone-500">
-          {body.length}/{MAX_BODY_LENGTH}
-        </p>
+        <div className="flex items-start justify-between gap-3">
+          <p className={fieldErrorClass}>{bodyError}</p>
+          <p className="shrink-0 text-sm text-muted">
+            {body.length}/{MAX_BODY_LENGTH}
+          </p>
+        </div>
       </div>
 
-      <div className="space-y-1.5">
-        <label htmlFor="name" className="block text-sm font-medium text-stone-700">
-          Name <span className="font-normal text-stone-500">(optional)</span>
+      <div className="space-y-2">
+        <label htmlFor="name" className={labelClass}>
+          Your name <span className={hintClass}>(optional)</span>
         </label>
         <input
           id="name"
           type="text"
+          autoComplete="nickname"
           value={name}
           onChange={(e) => setName(e.target.value)}
           maxLength={MAX_NAME_LENGTH}
           placeholder="Anonymous"
-          className="w-full rounded-lg border border-stone-300 px-3 py-2 text-stone-900 placeholder:text-stone-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20"
+          className={inputClass}
         />
       </div>
 
-      {error && (
-        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
+      {formError && (
+        <p role="alert" className="rounded-2xl bg-danger-bg px-4 py-3 text-base text-danger-text">
+          {formError}
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="w-full rounded-lg bg-emerald-700 px-4 py-2.5 font-medium text-white transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
-      >
+      <button type="submit" disabled={submitting} className={primaryButtonClass}>
         {submitting ? "Sharing…" : "Share story"}
       </button>
     </form>

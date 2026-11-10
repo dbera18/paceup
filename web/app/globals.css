@@ -1,6 +1,66 @@
 @import "tailwindcss";
 
+/*
+  PaceUp colors. Components use names like bg-surface or text-muted,
+  and these values switch automatically between light and dark mode.
+  Text colors were picked to meet WCAG AA contrast on their backgrounds.
+*/
+:root {
+  --bg: #fff8f2;
+  --surface: #ffffff;
+  --surface-2: #fff1e6;
+  --text: #1f1612;
+  --muted: #6b5a4f;
+  --line: #eedfd3;
+  --brand: #c2410c; /* warm orange; white text on it is 5.2:1 */
+  --brand-hover: #9a3412;
+  --brand-text: #c2410c;
+  --brand-soft: #ffedd5;
+  --on-brand: #ffffff;
+  --danger-bg: #fef2f2;
+  --danger-text: #b91c1c;
+  --success-bg: #ecfdf5;
+  --success-text: #047857;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15100d;
+    --surface: #211914;
+    --surface-2: #2c221b;
+    --text: #f7efe8;
+    --muted: #bfae9f;
+    --line: #3d3029;
+    --brand: #fb923c; /* bright orange; dark text on it is 8:1 */
+    --brand-hover: #fdba74;
+    --brand-text: #fdba74;
+    --brand-soft: #3d2416;
+    --on-brand: #1c0f06;
+    --danger-bg: #3b1515;
+    --danger-text: #fca5a5;
+    --success-bg: #0f2e22;
+    --success-text: #6ee7b7;
+    color-scheme: dark;
+  }
+}
+
 @theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-text: var(--brand-text);
+  --color-brand-soft: var(--brand-soft);
+  --color-on-brand: var(--on-brand);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-text: var(--danger-text);
+  --color-success-bg: var(--success-bg);
+  --color-success-text: var(--success-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

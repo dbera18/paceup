@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.db import Base, engine, get_db
-from app.models import Story
-from app.schemas import StoryCreate, StoryRead
+from app.models import Activity, Story
+from app.schemas import ActivityCreate, ActivityRead, StoryCreate, StoryRead
 
 
 @asynccontextmanager
@@ -48,4 +48,23 @@ def list_stories(
     db: Session = Depends(get_db),
 ):
     query = select(Story).order_by(Story.created_at.desc(), Story.id.desc()).limit(limit)
+    return db.scalars(query).all()
+
+
+
+@app.post("/activities", response_model=ActivityRead, status_code=201)
+def create_activity(activity: ActivityCreate, db: Session = Depends(get_db)):
+    new_activity = Activity(**activity.model_dump())
+    db.add(new_activity)
+    db.commit()
+    db.refresh(new_activity)
+    return new_activity
+
+
+@app.get("/activities", response_model=list[ActivityRead])
+def list_activities(
+    limit: int = Query(default=50, ge=1, le=100),
+    db: Session = Depends(get_db),
+):
+    query = select(Activity).order_by(Activity.created_at.desc(), Activity.id.desc()).limit(limit)
     return db.scalars(query).all()
