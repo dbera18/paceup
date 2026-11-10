@@ -5,7 +5,7 @@ PaceUp is a fitness community app. Tagline: **"Every Step Has a Purpose."**
 ## Stack
 
 - **Backend** (`/backend`): FastAPI + SQLAlchemy + Postgres. Tests live in `backend/tests` and run with pytest.
-- **Frontend** (`/web`): Next.js. (Not created yet.)
+- **Frontend** (`/web`): Next.js with TypeScript, App Router, and Tailwind. Check with `npm run lint` and `npm run build`. See `web/AGENTS.md`: read the docs in `web/node_modules/next/dist/docs/` before writing Next.js code.
 
 ## How to work in this repo
 

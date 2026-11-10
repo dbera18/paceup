@@ -5,13 +5,13 @@ from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
 
 # The 7 reasons someone can be moving. Change this list to change what's allowed.
 Purpose = Literal[
-    "health",
-    "mental_wellbeing",
-    "charity",
-    "community",
-    "training",
-    "recovery",
-    "joy",
+    "for_myself",
+    "for_someone_i_love",
+    "for_mental_wellbeing",
+    "for_a_cause",
+    "for_my_family",
+    "to_prove_i_can",
+    "for_my_community",
 ]
 
 Body = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=1000)]
