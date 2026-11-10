@@ -6,15 +6,15 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000
 
 // ---------- Purposes (shared by stories and activities) ----------
 
-// Each purpose has a friendly label and its own tag color (light + dark mode).
+// Each purpose has a friendly label. Its tag colors live in app/globals.css (see [data-purpose]).
 export const PURPOSES = [
-  { value: "for_myself", label: "For myself", tag: "bg-orange-100 text-orange-900 dark:bg-orange-400/15 dark:text-orange-200" },
-  { value: "for_someone_i_love", label: "For someone I love", tag: "bg-rose-100 text-rose-900 dark:bg-rose-400/15 dark:text-rose-200" },
-  { value: "for_mental_wellbeing", label: "For my mental wellbeing", tag: "bg-sky-100 text-sky-900 dark:bg-sky-400/15 dark:text-sky-200" },
-  { value: "for_a_cause", label: "For a cause", tag: "bg-emerald-100 text-emerald-900 dark:bg-emerald-400/15 dark:text-emerald-200" },
-  { value: "for_my_family", label: "For my family", tag: "bg-amber-100 text-amber-900 dark:bg-amber-400/15 dark:text-amber-200" },
-  { value: "to_prove_i_can", label: "To prove I can", tag: "bg-violet-100 text-violet-900 dark:bg-violet-400/15 dark:text-violet-200" },
-  { value: "for_my_community", label: "For my community", tag: "bg-teal-100 text-teal-900 dark:bg-teal-400/15 dark:text-teal-200" },
+  { value: "for_myself", label: "For myself" },
+  { value: "for_someone_i_love", label: "For someone I love" },
+  { value: "for_mental_wellbeing", label: "For my mental wellbeing" },
+  { value: "for_a_cause", label: "For a cause" },
+  { value: "for_my_family", label: "For my family" },
+  { value: "to_prove_i_can", label: "To prove I can" },
+  { value: "for_my_community", label: "For my community" },
 ] as const;
 
 export type Purpose = (typeof PURPOSES)[number]["value"];
@@ -26,12 +26,12 @@ export function findPurpose(value: string | null) {
 // ---------- Activity types ----------
 
 export const ACTIVITY_TYPES = [
-  { value: "run", label: "Run", emoji: "🏃" },
-  { value: "walk", label: "Walk", emoji: "🚶" },
-  { value: "ride", label: "Ride", emoji: "🚴" },
-  { value: "swim", label: "Swim", emoji: "🏊" },
-  { value: "gym", label: "Gym", emoji: "🏋️" },
-  { value: "other", label: "Other", emoji: "✨" },
+  { value: "run", phrase: "went for a run", label: "Run", emoji: "🏃" },
+  { value: "walk", phrase: "went for a walk", label: "Walk", emoji: "🚶" },
+  { value: "ride", phrase: "went for a ride", label: "Ride", emoji: "🚴" },
+  { value: "swim", phrase: "went for a swim", label: "Swim", emoji: "🏊" },
+  { value: "gym", phrase: "hit the gym", label: "Gym", emoji: "🏋️" },
+  { value: "other", phrase: "got moving", label: "Other", emoji: "✨" },
 ] as const;
 
 export type ActivityType = (typeof ACTIVITY_TYPES)[number]["value"];

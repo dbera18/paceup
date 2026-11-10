@@ -1,46 +1,90 @@
 @import "tailwindcss";
 
-/*
-  PaceUp colors. Components use names like bg-surface or text-muted,
-  and these values switch automatically between light and dark mode.
-  Text colors were picked to meet WCAG AA contrast on their backgrounds.
-*/
+/* ==========================================================================
+   PaceUp design system
+   Every color, font, shadow and animation is defined here, once.
+   Components use the names (bg-surface, text-muted, shadow-card…), never raw
+   colors, so light and dark mode switch automatically.
+   Text/background pairs were checked against WCAG AA (4.5:1 for body text).
+   ========================================================================== */
+
 :root {
-  --bg: #fff8f2;
-  --surface: #ffffff;
-  --surface-2: #fff1e6;
-  --text: #1f1612;
-  --muted: #6b5a4f;
-  --line: #eedfd3;
-  --brand: #c2410c; /* warm orange; white text on it is 5.2:1 */
-  --brand-hover: #9a3412;
-  --brand-text: #c2410c;
-  --brand-soft: #ffedd5;
-  --on-brand: #ffffff;
-  --danger-bg: #fef2f2;
-  --danger-text: #b91c1c;
-  --success-bg: #ecfdf5;
-  --success-text: #047857;
+  /* Surfaces */
+  --bg: #faf7f2; /* warm off-white page */
+  --surface: #ffffff; /* cards */
+  --surface-2: #f3eee7; /* inputs, chips, skeletons */
+  --line: #e9e2d9;
+
+  /* Text */
+  --text: #1a1613; /* near-black */
+  --muted: #6b635b; /* 5.8:1 on white */
+
+  /* One warm accent: sunrise coral */
+  --accent: #c8432a; /* fills; white text on it is 4.9:1 */
+  --accent-hover: #ad3922;
+  --accent-text: #b23a22; /* accent-colored text; 5.6:1 on the page */
+  --accent-soft: #fbe6de;
+  --on-accent: #ffffff;
+
+  /* Primary (ink) buttons */
+  --ink: #1a1613;
+  --ink-hover: #3a332d;
+  --on-ink: #faf7f2;
+
+  --danger-bg: #fdecea;
+  --danger-text: #a32a1c;
+  --overlay: rgb(26 22 19 / 0.45);
+
+  --card-shadow: 0 1px 2px rgb(40 28 18 / 0.04), 0 6px 24px -8px rgb(40 28 18 / 0.08);
+  --card-shadow-hover: 0 2px 4px rgb(40 28 18 / 0.05), 0 14px 36px -10px rgb(40 28 18 / 0.14);
+
+  /* Purpose tags: soft background + deep text (all 7:1 or better) */
+  --p-myself-bg: #fde8dc;   --p-myself-fg: #8a3418;
+  --p-love-bg: #fbe3e8;     --p-love-fg: #8e2440;
+  --p-mind-bg: #e3ecf8;     --p-mind-fg: #284d7e;
+  --p-cause-bg: #e2f0e6;    --p-cause-fg: #2d5e3d;
+  --p-family-bg: #fbefd5;   --p-family-fg: #7a5410;
+  --p-prove-bg: #ece5f7;    --p-prove-fg: #5a3a8c;
+  --p-community-bg: #ddf0ee; --p-community-fg: #1f5e59;
+
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #15100d;
-    --surface: #211914;
-    --surface-2: #2c221b;
-    --text: #f7efe8;
-    --muted: #bfae9f;
-    --line: #3d3029;
-    --brand: #fb923c; /* bright orange; dark text on it is 8:1 */
-    --brand-hover: #fdba74;
-    --brand-text: #fdba74;
-    --brand-soft: #3d2416;
-    --on-brand: #1c0f06;
-    --danger-bg: #3b1515;
-    --danger-text: #fca5a5;
-    --success-bg: #0f2e22;
-    --success-text: #6ee7b7;
+    --bg: #121010;
+    --surface: #1c1917;
+    --surface-2: #27221f;
+    --line: #322b27;
+
+    --text: #f5efe8;
+    --muted: #a89f96; /* 6.6:1 on cards */
+
+    --accent: #ff8a6b; /* dark text on it is 8:1 */
+    --accent-hover: #ffa289;
+    --accent-text: #ff9f85;
+    --accent-soft: #3a211a;
+    --on-accent: #1a0d09;
+
+    --ink: #f5efe8;
+    --ink-hover: #ffffff;
+    --on-ink: #1a1613;
+
+    --danger-bg: #3a1714;
+    --danger-text: #ffb4a8;
+    --overlay: rgb(0 0 0 / 0.6);
+
+    --card-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -10px rgb(0 0 0 / 0.5);
+    --card-shadow-hover: 0 2px 4px rgb(0 0 0 / 0.35), 0 16px 36px -12px rgb(0 0 0 / 0.6);
+
+    --p-myself-bg: #3a2219;   --p-myself-fg: #ffc1a6;
+    --p-love-bg: #3a1f27;     --p-love-fg: #f7b4c6;
+    --p-mind-bg: #1d2a3b;     --p-mind-fg: #b5cdf0;
+    --p-cause-bg: #1d2e23;    --p-cause-fg: #abd8b9;
+    --p-family-bg: #352b17;   --p-family-fg: #f0d08c;
+    --p-prove-bg: #2b2238;    --p-prove-fg: #cdb8f0;
+    --p-community-bg: #172f2d; --p-community-fg: #a0dcd5;
+
     color-scheme: dark;
   }
 }
@@ -49,22 +93,87 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
   --color-text: var(--text);
   --color-muted: var(--muted);
-  --color-line: var(--line);
-  --color-brand: var(--brand);
-  --color-brand-hover: var(--brand-hover);
-  --color-brand-text: var(--brand-text);
-  --color-brand-soft: var(--brand-soft);
-  --color-on-brand: var(--on-brand);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-text: var(--accent-text);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-ink: var(--ink);
+  --color-ink-hover: var(--ink-hover);
+  --color-on-ink: var(--on-ink);
   --color-danger-bg: var(--danger-bg);
   --color-danger-text: var(--danger-text);
-  --color-success-bg: var(--success-bg);
-  --color-success-text: var(--success-text);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-overlay: var(--overlay);
+
+  --shadow-card: var(--card-shadow);
+  --shadow-card-hover: var(--card-shadow-hover);
+
+  /* Typography: Geist for the interface, Newsreader (serif) for headlines and stories */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
 }
 
-body {
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+@theme {
+  --animate-sheet-up: sheet-up 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-in: fade-in 0.25s ease-out;
+  --animate-toast-in: toast-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-rise: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes sheet-up {
+    from { transform: translateY(24px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes toast-in {
+    from { transform: translateY(16px) scale(0.96); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  @keyframes rise {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+}
+
+/* Purpose tag colors, picked by data-purpose="..." */
+[data-purpose="for_myself"] { --tag-bg: var(--p-myself-bg); --tag-fg: var(--p-myself-fg); }
+[data-purpose="for_someone_i_love"] { --tag-bg: var(--p-love-bg); --tag-fg: var(--p-love-fg); }
+[data-purpose="for_mental_wellbeing"] { --tag-bg: var(--p-mind-bg); --tag-fg: var(--p-mind-fg); }
+[data-purpose="for_a_cause"] { --tag-bg: var(--p-cause-bg); --tag-fg: var(--p-cause-fg); }
+[data-purpose="for_my_family"] { --tag-bg: var(--p-family-bg); --tag-fg: var(--p-family-fg); }
+[data-purpose="to_prove_i_can"] { --tag-bg: var(--p-prove-bg); --tag-fg: var(--p-prove-fg); }
+[data-purpose="for_my_community"] { --tag-bg: var(--p-community-bg); --tag-fg: var(--p-community-fg); }
+
+@layer base {
+  html {
+    background: var(--bg);
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* One clear focus ring for everything you can tab to */
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  /* Don't let the page scroll behind an open sheet */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+}
+
+/* People who ask their device for less motion get (almost) none */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
