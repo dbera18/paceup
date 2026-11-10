@@ -5,6 +5,7 @@ import { useApp, CreateKind } from "@/components/shell/AppProvider";
 import { BackIcon, ChevronIcon, PenIcon, PulseIcon, QuestionIcon } from "@/components/ui/Icons";
 import Sheet from "@/components/ui/Sheet";
 import ActivityForm from "./ActivityForm";
+import ImportFlow from "./ImportFlow";
 import StoryForm from "./StoryForm";
 
 type Choice = {
@@ -21,7 +22,11 @@ const CHOICES: Choice[] = [
   { kind: "activity", title: "Log an activity", description: "A run, ride, swim, walk or workout.", Icon: PulseIcon },
 ];
 
-const TITLES: Record<CreateKind, string> = { story: "Share a story", activity: "Log an activity" };
+const TITLES: Record<CreateKind, string> = {
+  story: "Share a story",
+  activity: "Log an activity",
+  import: "Import from another app",
+};
 
 export default function CreateSheet() {
   const { createOpen, createKind, closeCreate, setCreateKind, notifyPosted } = useApp();
@@ -35,8 +40,9 @@ export default function CreateSheet() {
         createKind && (
           <button
             type="button"
-            onClick={() => setCreateKind(null)}
-            aria-label="Back to choices"
+            // From the importer, "back" returns to the activity form; otherwise to the choices.
+            onClick={() => setCreateKind(createKind === "import" ? "activity" : null)}
+            aria-label={createKind === "import" ? "Back to activity form" : "Back to choices"}
             className="flex size-10 items-center justify-center rounded-full text-muted transition hover:bg-surface-2 hover:text-text active:scale-95"
           >
             <BackIcon width={22} height={22} />
@@ -46,7 +52,8 @@ export default function CreateSheet() {
     >
       {/* key={createKind} gives each form a fresh, empty state every time it opens */}
       {createKind === "story" && <StoryForm key="story" onPosted={notifyPosted} />}
-      {createKind === "activity" && <ActivityForm key="activity" onPosted={notifyPosted} />}
+      {createKind === "activity" && <ActivityForm key="activity" onPosted={notifyPosted} onImport={() => setCreateKind("import")} />}
+      {createKind === "import" && <ImportFlow key="import" onPosted={notifyPosted} />}
 
       {!createKind && (
         <ul className="space-y-3 pb-2">

@@ -1,10 +1,11 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { createStory, MAX_BODY_LENGTH, MAX_NAME_LENGTH, Purpose, PURPOSES } from "@/lib/api";
+import { createStory, MAX_BODY_LENGTH, MAX_NAME_LENGTH, Purpose } from "@/lib/api";
 import Button from "@/components/ui/Button";
 import Field from "@/components/ui/Field";
 import { input } from "@/components/ui/styles";
+import PurposePicker from "./PurposePicker";
 
 export default function StoryForm({ onPosted }: { onPosted: (message: string) => void }) {
   const [purpose, setPurpose] = useState<Purpose | null>(null);
@@ -34,36 +35,15 @@ export default function StoryForm({ onPosted }: { onPosted: (message: string) =>
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-7">
-      {/* Purpose as tappable colored chips */}
-      <fieldset className="space-y-3">
-        <legend className="text-[0.9375rem] font-semibold text-text">Who or what do you move for?</legend>
-        <div className="flex flex-wrap gap-2">
-          {PURPOSES.map((p) => {
-            const selected = purpose === p.value;
-            return (
-              <button
-                key={p.value}
-                type="button"
-                data-purpose={p.value}
-                aria-pressed={selected}
-                onClick={() => {
-                  setPurpose(p.value);
-                  setErrors((e) => ({ ...e, purpose: undefined }));
-                }}
-                className={
-                  "min-h-11 rounded-full border px-4 text-[0.9375rem] font-semibold transition duration-200 active:scale-95 " +
-                  (selected
-                    ? "border-transparent bg-(--tag-bg) text-(--tag-fg) ring-2 ring-(--tag-fg)/40"
-                    : "border-line bg-surface text-muted hover:border-(--tag-fg)/40 hover:text-text")
-                }
-              >
-                {p.label}
-              </button>
-            );
-          })}
-        </div>
-        {errors.purpose && <p role="alert" className="text-sm font-medium text-danger-text">{errors.purpose}</p>}
-      </fieldset>
+      <PurposePicker
+        legend="Who or what do you move for?"
+        value={purpose}
+        onChange={(value) => {
+          setPurpose(value);
+          setErrors((e) => ({ ...e, purpose: undefined }));
+        }}
+        error={errors.purpose}
+      />
 
       <Field
         id="story-body"

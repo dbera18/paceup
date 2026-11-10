@@ -114,3 +114,15 @@ class ActivityRead(BaseModel):
         if not self.distance_m:
             return None
         return round(self.duration_s / (self.distance_m / 1000), 1)
+
+
+class ActivityImportPreview(BaseModel):
+    """A summary read from an uploaded file. It is NOT saved: the person checks it,
+    adds a purpose and note, and then sends it to POST /activities."""
+
+    activity_type: ActivityType
+    distance_m: float | None
+    duration_s: int
+    avg_heart_rate: int | None
+    started_at: datetime | None
+    source_format: Literal["gpx", "tcx", "fit"]

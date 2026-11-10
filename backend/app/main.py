@@ -1,14 +1,16 @@
 from contextlib import asynccontextmanager
+from dataclasses import asdict
 
-from fastapi import Depends, FastAPI, Query
+from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.db import Base, engine, get_db
+from app.importers import MAX_IMPORT_BYTES, ImportProblem, summarize_workout_file
 from app.models import Activity, Story
-from app.schemas import ActivityCreate, ActivityRead, StoryCreate, StoryRead
+from app.schemas import ActivityCreate, ActivityImportPreview, ActivityRead, StoryCreate, StoryRead
 
 
 @asynccontextmanager
@@ -68,3 +70,22 @@ def list_activities(
 ):
     query = select(Activity).order_by(Activity.created_at.desc(), Activity.id.desc()).limit(limit)
     return db.scalars(query).all()
+
+
+
+@app.post("/activities/import", response_model=ActivityImportPreview)
+async def import_activity(file: UploadFile = File(...)):
+    """Read a GPX, TCX or FIT file and return a summary preview. Nothing is saved.
+
+    The file is only held in memory for this request. We never write it anywhere,
+    and we never return or keep GPS points or routes.
+    """
+    try:
+        # Read one byte past the limit so we can tell "exactly 5 MB" from "too big".
+        data = await file.read(MAX_IMPORT_BYTES + 1)
+        summary = summarize_workout_file(file.filename, data)
+    except ImportProblem as problem:
+        raise HTTPException(status_code=problem.status_code, detail=problem.message)
+    finally:
+        await file.close()
+    return asdict(summary)

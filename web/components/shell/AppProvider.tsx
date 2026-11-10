@@ -3,7 +3,7 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { DistanceUnit } from "@/lib/format";
 
-export type CreateKind = "story" | "activity";
+export type CreateKind = "story" | "activity" | "import";
 
 type AppState = {
   // The Create sheet

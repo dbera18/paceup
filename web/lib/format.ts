@@ -9,9 +9,9 @@ export function metersPerUnit(unit: DistanceUnit): number {
   return unit === "km" ? METERS_PER_KM : METERS_PER_MILE;
 }
 
-/** 5000, "km" → "5.00 km" */
-export function formatDistance(meters: number, unit: DistanceUnit): string {
-  return `${(meters / metersPerUnit(unit)).toFixed(2)} ${unit}`;
+/** 5000, "km" → "5.00 km" (or "5.0 km" with decimals = 1) */
+export function formatDistance(meters: number, unit: DistanceUnit, decimals = 2): string {
+  return `${(meters / metersPerUnit(unit)).toFixed(decimals)} ${unit}`;
 }
 
 /** 1650 → "27:30", 3725 → "1:02:05" */
@@ -35,4 +35,13 @@ export function formatDate(iso: string): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";
   return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+/** "2026-11-04T12:00:00Z" → "Tue, Nov 4 · 7:00 AM" (in the viewer's time zone) */
+export function formatDateTime(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  const day = date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  const time = date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  return `${day} · ${time}`;
 }

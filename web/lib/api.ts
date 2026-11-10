@@ -133,3 +133,48 @@ export const getActivities = () => getJson<Activity[]>("/activities", "activitie
 export const createStory = (story: NewStory) => postJson<Story>("/stories", story, "story");
 export const createActivity = (activity: NewActivity) =>
   postJson<Activity>("/activities", activity, "activity");
+
+// ---------- Importing from Strava, Garmin, etc. ----------
+
+export const IMPORT_EXTENSIONS = [".gpx", ".tcx", ".fit"] as const;
+export const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
+export const NOT_A_WORKOUT_MESSAGE = "That file doesn't look like a workout. Try a GPX, TCX, or FIT file.";
+
+// What the backend read from the file. Nothing is saved until the person shares it.
+export type ImportPreview = {
+  activity_type: ActivityType;
+  distance_m: number | null;
+  duration_s: number;
+  avg_heart_rate: number | null;
+  started_at: string | null;
+  source_format: "gpx" | "tcx" | "fit";
+};
+
+// Quick checks in the browser, so obviously wrong files never get uploaded.
+export function checkImportFile(file: File): string | null {
+  const name = file.name.toLowerCase();
+  if (name.endsWith(".zip") || name.endsWith(".gz")) {
+    return "That file is compressed. Unzip it first, then choose the GPX, TCX, or FIT file inside.";
+  }
+  if (!IMPORT_EXTENSIONS.some((ext) => name.endsWith(ext))) return NOT_A_WORKOUT_MESSAGE;
+  if (file.size > MAX_IMPORT_BYTES) return "That file is bigger than 5 MB. Try exporting just one activity.";
+  if (file.size === 0) return "That file is empty. Try exporting it again.";
+  return null;
+}
+
+export async function importActivityFile(file: File): Promise<ImportPreview> {
+  const form = new FormData();
+  form.append("file", file);
+  const response = await request("/activities/import", { method: "POST", body: form });
+  if (!response.ok) {
+    let message = "We couldn't read that file. Please try again.";
+    try {
+      const data = await response.json();
+      if (typeof data?.detail === "string") message = data.detail;
+    } catch {
+      // not JSON; keep the friendly default
+    }
+    throw new Error(message);
+  }
+  return response.json();
+}

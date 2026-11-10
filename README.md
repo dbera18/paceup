@@ -77,6 +77,7 @@ Open http://localhost:3000 to see the story wall. The frontend finds the backend
 | POST   | `/stories` | Shares a new story                             |
 | GET    | `/activities` | Lists logged activities, newest first (`?limit=`, default 50) |
 | POST   | `/activities` | Logs a new activity                         |
+| POST   | `/activities/import` | Reads a GPX, TCX, or FIT file (max 5 MB) and returns a summary preview. Nothing is saved |
 
 A story has a `purpose` (one of: `for_myself`, `for_someone_i_love`, `for_mental_wellbeing`, `for_a_cause`, `for_my_family`, `to_prove_i_can`, `for_my_community`), a `body` (1–1000 characters), and an optional `display_name`.
 
@@ -89,3 +90,9 @@ An activity has an `activity_type` (`run`, `swim`, `ride`, `gym`, `walk`, `other
 - `display_name`
 
 Distance is stored in meters and time in seconds. The API also returns `pace_s_per_km`, which is calculated when activities are sent back and never stored.
+
+### Importing from Strava, Garmin, or other apps
+
+`POST /activities/import` takes one workout file as form data (field name `file`). It returns only a summary: type, distance, duration, average heart rate, and start time. The file itself is never stored, and GPS points and routes are never kept. The person checks the preview, adds a purpose and note, and then it's saved through `POST /activities`.
+
+XML files are checked with `defusedxml` first, so files with DTDs or entities are refused. FIT files must pass their checksum.

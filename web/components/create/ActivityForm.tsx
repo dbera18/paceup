@@ -16,7 +16,7 @@ import {
 } from "@/lib/api";
 import { metersPerUnit } from "@/lib/format";
 import { useApp } from "@/components/shell/AppProvider";
-import { ChevronIcon } from "@/components/ui/Icons";
+import { ChevronIcon, UploadIcon } from "@/components/ui/Icons";
 import Button from "@/components/ui/Button";
 import Field from "@/components/ui/Field";
 import { input } from "@/components/ui/styles";
@@ -43,7 +43,12 @@ function UnitInput({ unit, ...props }: React.InputHTMLAttributes<HTMLInputElemen
   );
 }
 
-export default function ActivityForm({ onPosted }: { onPosted: (message: string) => void }) {
+type Props = {
+  onPosted: (message: string) => void;
+  onImport: () => void; // opens "Import from another app"
+};
+
+export default function ActivityForm({ onPosted, onImport }: Props) {
   const { unit, setUnit } = useApp();
   const [activityType, setActivityType] = useState<ActivityType | null>(null);
   const [distance, setDistance] = useState("");
@@ -128,6 +133,22 @@ export default function ActivityForm({ onPosted }: { onPosted: (message: string)
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-7">
+      {/* Already recorded it in another app? Bring it in instead of typing. */}
+      <button
+        type="button"
+        onClick={onImport}
+        className="group flex w-full items-center gap-4 rounded-3xl border border-dashed border-line bg-surface-2/40 p-4 text-left transition duration-200 hover:border-muted/40 hover:bg-surface-2 active:scale-[0.98]"
+      >
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-accent-soft text-accent-text">
+          <UploadIcon width={20} height={20} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[0.9375rem] font-semibold text-text">Import from another app</span>
+          <span className="block text-sm text-muted">Strava, Garmin, or any GPX, TCX or FIT file</span>
+        </span>
+        <ChevronIcon width={20} height={20} className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5" />
+      </button>
+
       {/* Activity type: big tappable tiles */}
       <fieldset className="space-y-3">
         <legend className="text-[0.9375rem] font-semibold text-text">What did you do?</legend>
