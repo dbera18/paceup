@@ -19,6 +19,7 @@ export default function ActivityCard({ activity, unit }: { activity: Activity; u
   // "5.00 km" → value "5.00" + unit; keeps the number big and the unit small
   const [distValue, distUnit] = hasDistance ? formatDistance(activity.distance_m!, unit).split(" ") : [];
   const author = activity.display_name || "Anonymous";
+  const when = activity.started_at ?? activity.created_at;
 
   return (
     <article className={`${cardInteractive} p-6 sm:p-8`}>
@@ -31,7 +32,8 @@ export default function ActivityCard({ activity, unit }: { activity: Activity; u
             {author} <span className="font-normal text-muted">{type.phrase}</span>
           </h3>
           <p className="text-sm text-muted">
-            <time dateTime={activity.created_at}>{formatDate(activity.created_at)}</time>
+            {/* Show when the workout happened if we know it, otherwise when it was shared */}
+            <time dateTime={when}>{formatDate(when)}</time>
           </p>
         </div>
       </header>

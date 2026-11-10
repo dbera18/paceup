@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, StringConstraints, computed_field, field_validator
@@ -53,6 +53,13 @@ MIN_HEART_RATE, MAX_HEART_RATE = 30, 250
 
 Note = Annotated[str, StringConstraints(strip_whitespace=True, max_length=500)]
 
+EARLIEST_START = datetime(1990, 1, 1, tzinfo=timezone.utc)
+
+
+def as_utc(value: datetime) -> datetime:
+    """Convert any time to UTC. Times without a time zone are treated as UTC already."""
+    return value.astimezone(timezone.utc) if value.tzinfo else value.replace(tzinfo=timezone.utc)
+
 
 class ActivityCreate(BaseModel):
     """What a client sends to POST /activities."""
@@ -64,6 +71,7 @@ class ActivityCreate(BaseModel):
     purpose: Purpose | None = None
     note: Note | None = None
     display_name: DisplayName | None = None
+    started_at: datetime | None = None  # when the workout happened; defaults to "not known"
 
     @field_validator("distance_m")
     @classmethod
@@ -91,6 +99,19 @@ class ActivityCreate(BaseModel):
     def blank_means_none(cls, value: str | None) -> str | None:
         return value or None
 
+    @field_validator("started_at")
+    @classmethod
+    def check_started_at(cls, value: datetime | None) -> datetime | None:
+        if value is None:
+            return None
+        value = as_utc(value)
+        # A day of slack covers time-zone differences between devices.
+        if value > datetime.now(timezone.utc) + timedelta(days=1):
+            raise ValueError("Start time can't be in the future.")
+        if value < EARLIEST_START:
+            raise ValueError("Start time must be in 1990 or later.")
+        return value
+
 
 class ActivityRead(BaseModel):
     """What the API sends back. Pace is calculated here, not stored."""
@@ -105,7 +126,13 @@ class ActivityRead(BaseModel):
     purpose: Purpose | None
     note: str | None
     display_name: str | None
+    started_at: datetime | None
     created_at: datetime
+
+    @field_validator("started_at", "created_at")
+    @classmethod
+    def times_are_utc(cls, value: datetime | None) -> datetime | None:
+        return as_utc(value) if value else value
 
     @computed_field
     @property

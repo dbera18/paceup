@@ -94,7 +94,7 @@ def check_xml_is_safe(data: bytes):
 def as_utc(value: datetime | None) -> datetime | None:
     if value is None:
         return None
-    return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc) if value.tzinfo else value.replace(tzinfo=timezone.utc)
 
 
 def parse_iso(text: str | None) -> datetime | None:

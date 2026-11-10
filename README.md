@@ -88,6 +88,7 @@ An activity has an `activity_type` (`run`, `swim`, `ride`, `gym`, `walk`, `other
 - `purpose`: same values as stories
 - `note`: up to 500 characters
 - `display_name`
+- `started_at`: when the workout happened (filled in automatically for imports; can't be in the future)
 
 Distance is stored in meters and time in seconds. The API also returns `pace_s_per_km`, which is calculated when activities are sent back and never stored.
 
@@ -96,3 +97,5 @@ Distance is stored in meters and time in seconds. The API also returns `pace_s_p
 `POST /activities/import` takes one workout file as form data (field name `file`). It returns only a summary: type, distance, duration, average heart rate, and start time. The file itself is never stored, and GPS points and routes are never kept. The person checks the preview, adds a purpose and note, and then it's saved through `POST /activities`.
 
 XML files are checked with `defusedxml` first, so files with DTDs or entities are refused. FIT files must pass their checksum.
+
+When the server starts, `app/migrations.py` adds any new columns to tables that already exist (for example `activities.started_at`). That's because `create_all` only creates missing tables, not missing columns.

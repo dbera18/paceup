@@ -72,10 +72,11 @@ def test_import_does_not_save_an_activity(client):
 
 def test_preview_can_be_saved_through_activities_endpoint(client):
     preview = upload(client, "run.fit", (SAMPLES / "run.fit").read_bytes()).json()
-    payload = {k: preview[k] for k in ("activity_type", "distance_m", "duration_s", "avg_heart_rate")}
+    payload = {k: preview[k] for k in ("activity_type", "distance_m", "duration_s", "avg_heart_rate", "started_at")}
     saved = client.post("/activities", json={**payload, "purpose": "for_myself", "note": "Imported"})
     assert saved.status_code == 201
     assert saved.json()["pace_s_per_km"] == round(1900 / 5.2, 1)
+    assert saved.json()["started_at"] == "2026-11-06T06:45:00Z"  # the workout's real date is kept
 
 
 # ---------- rejected files ----------

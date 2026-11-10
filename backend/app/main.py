@@ -9,13 +9,16 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.db import Base, engine, get_db
 from app.importers import MAX_IMPORT_BYTES, ImportProblem, summarize_workout_file
+from app.migrations import add_missing_columns
 from app.models import Activity, Story
 from app.schemas import ActivityCreate, ActivityImportPreview, ActivityRead, StoryCreate, StoryRead
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Create the tables in Postgres when the server starts (if they don't exist yet).
+    # When the server starts: add any new columns to existing tables,
+    # then create any tables that don't exist yet.
+    add_missing_columns(engine)
     Base.metadata.create_all(bind=engine)
     yield
 

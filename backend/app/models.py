@@ -31,6 +31,9 @@ class Activity(Base):
     purpose: Mapped[str | None] = mapped_column(String(32), nullable=True)
     note: Mapped[str | None] = mapped_column(String(500), nullable=True)
     display_name: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    # When the workout actually happened (e.g. read from an imported file).
+    # created_at is when it was shared on PaceUp.
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )

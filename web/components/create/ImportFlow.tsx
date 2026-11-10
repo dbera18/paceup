@@ -103,6 +103,7 @@ export default function ImportFlow({ onPosted }: { onPosted: (message: string) =
         purpose,
         note: note.trim() || null,
         display_name: name.trim() || null,
+        started_at: preview.started_at, // keep the real date of the workout
       });
       onPosted("Imported and shared!");
     } catch (err) {

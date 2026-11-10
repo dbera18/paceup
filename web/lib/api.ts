@@ -71,11 +71,14 @@ export type Activity = {
   purpose: Purpose | null;
   note: string | null;
   display_name: string | null;
-  created_at: string;
+  started_at: string | null; // when the workout happened (known for imports)
+  created_at: string; // when it was shared on PaceUp
   pace_s_per_km: number | null; // calculated by the backend
 };
 
-export type NewActivity = Omit<Activity, "id" | "created_at" | "pace_s_per_km">;
+export type NewActivity = Omit<Activity, "id" | "created_at" | "pace_s_per_km" | "started_at"> & {
+  started_at?: string | null;
+};
 
 // ---------- Requests ----------
 

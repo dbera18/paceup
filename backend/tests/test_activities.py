@@ -147,3 +147,33 @@ def test_list_activities_defaults_to_50(client):
     for _ in range(55):
         post(client, activity_type="walk", duration_s=60)
     assert len(client.get("/activities").json()) == 50
+
+
+# ---------- start time (when the workout happened) ----------
+
+
+def test_started_at_is_saved_and_returned(client):
+    data = post(client, activity_type="run", duration_s=1800, started_at="2026-11-04T07:00:00-05:00").json()
+    assert data["started_at"] == "2026-11-04T12:00:00Z"  # stored and returned in UTC
+
+
+def test_started_at_is_optional(client):
+    data = post(client, activity_type="walk", duration_s=600).json()
+    assert data["started_at"] is None
+
+
+def test_started_at_without_time_zone_is_treated_as_utc(client):
+    data = post(client, activity_type="run", duration_s=60, started_at="2026-11-04T12:00:00").json()
+    assert data["started_at"] == "2026-11-04T12:00:00Z"
+
+
+def test_rejects_started_at_in_the_future(client):
+    response = post(client, activity_type="run", duration_s=60, started_at="2099-01-01T00:00:00Z")
+    assert response.status_code == 422
+    assert "can't be in the future" in error_messages(response)
+
+
+def test_rejects_started_at_before_1990(client):
+    response = post(client, activity_type="run", duration_s=60, started_at="1985-06-01T00:00:00Z")
+    assert response.status_code == 422
+    assert "1990 or later" in error_messages(response)
